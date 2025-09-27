@@ -1,0 +1,276 @@
+/* ============ TOKENS DE MARCA ============ */
+:root {
+  --brand-bg: #0b1220;
+  --brand-bg-2: #0f172a;
+  --brand-primary: #4657ff; /* ajuste para a cor primária da QI TECH */
+  --brand-accent: #09d1ff; /* cor de destaque */
+  --brand-text: #e6e8ee;
+  --brand-muted: #93a4bf;
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ============ BASE DA HOME ============ */
+.home {
+  color: var(--brand-text);
+  background: radial-gradient(
+      1200px 600px at 10% -10%,
+      color-mix(in srgb, var(--brand-primary), transparent 75%) 10%,
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 400px at 90% 10%,
+      color-mix(in srgb, var(--brand-accent), transparent 75%) 10%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--brand-bg), var(--brand-bg-2));
+}
+
+/* container (você pode usar a .container do Infima; aqui garantimos largura) */
+.container {
+  max-width: 1200px;
+  padding: 0 1.25rem;
+  margin: 0 auto;
+}
+
+/* ============ HERO ============ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0 6rem;
+  background: #fff !important;
+  color: #222 !important;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.04);
+  z-index: 2;
+}
+
+.hero__container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .hero__container {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
+.hero__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hero__title {
+  font-weight: 800;
+  line-height: 1.1;
+  font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0 0.25rem;
+  text-align: center;
+}
+
+.grad {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    var(--brand-primary),
+    var(--brand-accent)
+  );
+}
+
+.hero__subtitle {
+  font-size: 1.35rem;
+  line-height: 1.7;
+  color: var(--brand-muted);
+  max-width: 60ch;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.25rem 0;
+}
+
+.hero__right {
+  display: flex;
+  justify-content: center;
+}
+.hero__logo {
+  width: clamp(12rem, 24vw, 18rem);
+  opacity: 0.95;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+}
+
+/* ============ BOTÕES ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+  transition: transform 0.06s ease, opacity 0.2s ease,
+    background-color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background: var(--brand-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn--primary:hover {
+  opacity: 0.92;
+}
+
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ============ FEATURES GRID ============ */
+.section {
+  padding: 4rem 0;
+}
+
+.grid--features {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid--features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .grid--features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  border-radius: 18px;
+  padding: 1.25rem;
+  backdrop-filter: blur(6px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.card__text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #d4d9e6;
+  margin-bottom: 0.75rem;
+}
+.card__link {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brand-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ============ CTA FINAL ============ */
+.section--cta {
+  padding-top: 2rem;
+  padding-bottom: 5rem;
+}
+
+.cta {
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+  border-radius: 22px;
+  padding: 2.5rem;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.cta__title {
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.25rem);
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+.cta__text {
+  font-size: 1.05rem;
+  color: #d4d9e6;
+  margin-bottom: 1rem;
+}
+.cta__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* ============ META LISTA ============ */
+.hero__meta {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  color: #d4d9e6;
+}
+
+.hero__meta li::marker {
+  content: "– ";
+}
