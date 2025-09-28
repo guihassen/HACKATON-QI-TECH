@@ -1,61 +1,74 @@
 ---
 slug: /tecnologias/frontend
 title: Frontend
-description: Stack de UI, padrões de componentes e performance
+description: Parte visual da aplicação
 ---
-
-# Frontend
 
 # Frontend
 
 ## React com TypeScript
 
-React com TypeScript foi escolhido como tecnologia principal para a interface do usuário (a parte visual que os usuários veem e interagem).  
-React é uma biblioteca JavaScript amplamente usada em aplicações financeiras de grandes empresas.
+O **React com TypeScript** foi escolhido para construir a interface da carteira digital segura, implementando componentes específicos como:
 
-- O **Airbnb** conseguiu melhorar a velocidade de seus sistemas de pagamento em **150x** após adotar React.
-- Empresas como **PayPal** e **Robinhood** usam essa tecnologia para processar milhões de transações diárias com segurança.
+- Saldo em tempo real
+- Histórico de transações
+- Formulários de transferência
+
+**React** permite atualizações instantâneas de saldo via **WebSocket**, sem recarregar a página.  
+**TypeScript** previne erros em cálculos financeiros que poderiam causar inconsistências.
+
+- O **Airbnb** melhorou sistemas de pagamento em **150x** após migrar para React, demonstrando capacidade de processar **milhões de transações diárias**.
 
 ---
 
 ## Next.js
 
-Next.js é um framework (conjunto de ferramentas) que implementa **SSR** (Server-Side Rendering - renderização no servidor) e **SSG** (Static Site Generation - geração de páginas estáticas).
+O **Next.js** implementa **Server-Side Rendering (SSR)** para páginas de carteira, garantindo que informações financeiras sensíveis sejam renderizadas no **servidor** antes de chegar ao navegador.
 
-- As páginas do site carregam **40% mais rápido** e funcionam melhor em dispositivos móveis.
-- Mantém métricas importantes como **LCP (Largest Contentful Paint)** abaixo de **2,5 segundos**, garantindo que os usuários vejam as informações rapidamente.
+- Melhora segurança.
+- Reduz em **40%** o tempo de carregamento de dashboards financeiros.
+
+Além disso, o **Static Site Generation (SSG)** pré-gera páginas estáticas como **“Como transferir”** e **“Taxas”**, mantendo alta performance enquanto dados dinâmicos como **saldo** são carregados separadamente.
 
 ---
 
 ## Redux Toolkit com RTK Query
 
-O **Redux Toolkit com RTK Query** organiza e sincroniza todas as informações da aplicação em tempo real, como:
+O **Redux Toolkit com RTK Query** gerencia o **estado da carteira** de forma centralizada, sincronizando:
 
-- Saldos de conta
+- Saldos
 - Histórico de transações
-- Pontuações de crédito
+- Status de transferências
 
-Essa tecnologia garante que todos os dados financeiros mostrados ao usuário estejam sempre atualizados e corretos, algo **fundamental em aplicações P2P lending**, onde precisão é crítica.
+Funcionalidades:
+
+- **Time-travel debugging** → rastreia cada mudança de estado financeiro para **auditoria**.
+- **Middleware personalizado** → registra todas as operações da carteira para **compliance**.
+- **Cache com TTL apropriado** → protege dados sensíveis como saldos.
 
 ---
 
 ## Tailwind CSS
 
-O **Tailwind CSS** é usado para estilização (aparência visual).
+O **Tailwind CSS** estiliza os componentes da carteira com um **design system consistente**, incluindo:
 
-- Produz arquivos **70-90% menores** que alternativas tradicionais.
-- Mantém bundles (pacotes de código) abaixo de **10kB**, contra **30-100kB+** de outros frameworks.
-- Isso resulta em **48% melhor performance** que soluções CSS-in-JS, além de carregamento mais rápido.
+- Indicadores visuais de **segurança** (cadeados, certificados)
+- Estados de transação (**pendente, aprovada, rejeitada**)
+- Hierarquia visual clara para **informações financeiras críticas**
+
+Mantém o **bundle CSS abaixo de 10kB**, mesmo com componentes complexos, garantindo **carregamento rápido em conexões móveis**.
 
 ---
 
-## TypeScript
+## Componentes de Segurança Visual
 
-O **TypeScript** adiciona verificação de tipos ao código, ajudando a prevenir erros em cálculos financeiros.
+Foram implementados padrões específicos para **fintech**:
 
-- Estudos mostram que pode evitar **15-38% dos bugs** que chegariam aos usuários finais.
-- Sua adoção cresceu de **12% para 35%** entre **2017-2024**.
-- É fundamental em aplicações que lidam com **dinheiro real**.
+- **Confirmações em duas etapas** para transferências
+- **Máscaras de dados sensíveis**
+- Indicadores de **criptografia ativa**
+- **Feedback visual imediato** em operações críticas
+- **Progressive disclosure** → exibe informações bancárias apenas quando necessário, reduzindo exposição de dados
 
 ---
 

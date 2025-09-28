@@ -39,4 +39,12 @@ import Link from '@docusaurus/Link';
     <h3>Blockchain</h3>
     <p>Casos de uso, integrações e padrões.</p>
   </Link>
+    <Link to="/tecnologias/pagamentos" className="tech-card">
+    <h3>Pagamentos & Transações </h3>
+    <p>Integração com pix e outros.</p>
+  </Link>
+  <Link to="/tecnologias/comunicacao-realtime" className="tech-card">
+    <h3>Comunicação & Real-time </h3>
+    <p>Atualizações, notificações, sincronização. </p>
+  </Link>
 </div>

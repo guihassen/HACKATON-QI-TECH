@@ -1,58 +1,70 @@
-# Plataforma & SRE
-
-## Site Reliability Engineering (SRE)
-
-O **Site Reliability Engineering (SRE)** é uma metodologia criada pelo Google que aplica técnicas de programação para manter sistemas funcionando de forma confiável.
-
-- Trata problemas de infraestrutura como problemas de código.
-- Garante que aplicações financeiras funcionem com **99,9% de disponibilidade**, reduzindo falhas críticas.
-
 ---
+slug: /tecnologias/plataforma-sre
+title: Plataforma & SRE
+description: Plataforma & SRE
+---
+
+# Plataforma & SRE
 
 ## Kubernetes
 
-O **Kubernetes** é uma plataforma que gerencia automaticamente onde e como as diferentes partes da aplicação rodam.
+O **Kubernetes** garante **alta disponibilidade** para serviços críticos da carteira através de **réplicas automáticas em múltiplas zonas AWS**, mantendo operações financeiras ativas mesmo em caso de falhas de servidor.
 
-- Funciona como um **maestro de orquestra**, coordenando todos os componentes.
-- Ajusta recursos automaticamente conforme a demanda.
-- Em **P2P lending**, garante que o sistema se adapte quando muitos usuários realizam transações simultaneamente.
-
----
-
-## Observabilidade
-
-A **observabilidade** permite "enxergar dentro" do sistema em tempo real, identificando problemas antes que afetem usuários.
-
-Principais métricas monitoradas:
-
-1. Velocidade de resposta
-2. Quantidade de uso
-3. Erros que acontecem
-4. Nível de utilização do sistema
-
-Em aplicações financeiras, isso permite detectar falhas em transferências e pagamentos antes que os usuários percebam.
+- Implementa **health checks específicos** que verificam a conectividade com gateways **PIX** a cada **30 segundos**.
+- Reinicia **pods automaticamente** em caso de problemas.
+- O **auto-scaling** adiciona recursos durante picos de transferências, garantindo que operações não falhem por sobrecarga.
 
 ---
 
-## Ferramentas de Observabilidade
+## Prometheus
 
-O conjunto de ferramentas adotado inclui:
+O **Prometheus** monitora **métricas financeiras críticas**, incluindo:
 
-- **Prometheus** → coleta dados de performance
-- **Grafana** → cria gráficos e dashboards
-- **Jaeger** → rastreia operações entre diferentes partes do sistema
-- **ELK Stack** → organiza registros de eventos
+- **Latência de transferências PIX** (meta < 2 segundos)
+- **Taxa de sucesso de transações** (meta > 99,9%)
+- **Disponibilidade de APIs de pagamento**
+- **Volume de transações por segundo**
 
-Em conjunto, essas ferramentas mostram a **"saúde completa" da aplicação**.
+**Alertas automáticos** são disparados quando:
+
+- Transferências demoram mais de **5 segundos**
+- A taxa de falha excede **0,1%**
+
+Isso permite **resposta imediata** antes que usuários sejam afetados.
 
 ---
 
-## Inteligência Artificial no SRE
+## Grafana
 
-A **inteligência artificial** é utilizada para detectar problemas automaticamente e, em alguns casos, corrigi-los sem intervenção humana.
+O **Grafana** cria **dashboards específicos para operações financeiras**:
 
-- Evita que a equipe técnica precise ser acionada de madrugada.
-- Apenas situações críticas são escaladas para profissionais, otimizando eficiência operacional.
+- **Painel de saúde da carteira** mostrando saldo total, volume de transferências em tempo real, status de gateways PIX/TED e métricas de fraude detectada.
+- **Dashboards executivos** exibem KPIs como:
+  - Receita de taxas
+  - Volume transacionado
+  - Disponibilidade do sistema (SLA de **99,95%**)
+
+---
+
+## Observabilidade Financeira
+
+A **observabilidade financeira** implementa rastreamento distribuído para acompanhar transações completas — desde o clique do usuário até a confirmação bancária.
+
+- Permite identificar exatamente **onde operações falham**.
+- **Logs estruturados** registram cada etapa da transferência para **auditoria regulatória**.
+- **Circuit breakers** isolam automaticamente gateways problemáticos, redirecionando para backups sem afetar usuários.
+
+---
+
+## SLAs Específicos
+
+Foram definidos **SLAs críticos** para a carteira digital:
+
+- **Disponibilidade**: 99,95% (máximo 4 horas de downtime/ano)
+- **Latência máxima**:
+  - 2 segundos para consulta de saldo
+  - 5 segundos para transferências PIX
+- **Recuperação de falhas**: em menos de 1 minuto
 
 ---
 

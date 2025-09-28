@@ -7,20 +7,16 @@ description: Visão geral funcional, fluxos e decisões de alto nível
 import Link from '@docusaurus/Link';
 
 <div className="tech-grid">
+  <Link to="/descricao/contexto" className="tech-card">
+    <h3>Contextualização da Solução</h3>
+    <p>Apresentação da problemática e solução.</p>
+  </Link>
   <Link to="/descricao/como-funciona" className="tech-card">
-    <h3>Como Funciona</h3>
-    <p>Resumo do fluxo principal e atores envolvidos.</p>
+    <h3>Como a plataforma funciona?</h3>
+    <p>Descreve como a plataforma funciona de forma mais detalhada.</p>
   </Link>
-  <Link to="/descricao/domínios" className="tech-card">
-    <h3>Domínios</h3>
-    <p>Áreas de negócio e limites de contexto.</p>
-  </Link>
-  <Link to="/descricao/diagramas" className="tech-card">
-    <h3>Diagramas</h3>
-    <p>Visões C4, sequências e integrações.</p>
-  </Link>
-  <Link to="/descricao/decisoes" className="tech-card">
-    <h3>Decisões</h3>
-    <p>Registros de decisões arquiteturais (ADRs).</p>
+  <Link to="/descricao/fluxo-de-pagamentos" className="tech-card">
+    <h3>Fluxo de Pagamentos & Repasse</h3>
+    <p>Como a plataforma lida com o fluxo de pagamento e repasse.</p>
   </Link>
 </div>

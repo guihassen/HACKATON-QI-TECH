@@ -1,15 +1,22 @@
+---
+slug: /tecnologias/arquitetura
+title: Arquitetura
+description: Arquitetura da solução
+---
+
 # Arquitetura
 
-## Microsserviços
+## Microsserviços Financeiros
 
-A arquitetura de **microsserviços** foi escolhida para dividir a aplicação em serviços independentes menores, cada um responsável por funcionalidades específicas como:
+Os **microsserviços financeiros** dividem funcionalidades críticas da carteira em serviços independentes:
 
-- Autenticação de usuários
-- Processamento de empréstimos
-- Cálculo de score de crédito
-- Gestão de pagamentos
+- `wallet-service` → gestão de saldos
+- `payment-service` → processamento PIX/TED
+- `transaction-service` → histórico de transações
+- `credit-scoring-service` → análise de risco
+- `fraud-detection-service` → monitoramento de fraudes
 
-Essa abordagem permite que cada componente seja desenvolvido, testado e implantado separadamente, **reduzindo complexidade e aumentando flexibilidade**.
+Cada serviço possui seu **database dedicado** e pode falhar independentemente sem afetar operações críticas.
 
 - Exemplo: o **Monzo Bank** utiliza mais de **2.000 microsserviços** para garantir conformidade regulatória e manter escalabilidade.
 
@@ -17,60 +24,132 @@ Essa abordagem permite que cada componente seja desenvolvido, testado e implanta
 
 ## Domain-Driven Design (DDD)
 
-O **Domain-Driven Design (DDD)** organiza a aplicação em domínios de negócio bem definidos (**contextos delimitados**).
+O **Domain-Driven Design** organiza os contextos financeiros em **bounded contexts** bem definidos:
 
-- Separação de responsabilidades:
-  - Gestão de usuários
-  - Processo de empréstimos
-  - Análise de risco
-  - Sistema de pagamentos
+- **Payments** → transferências e recebimentos
+- **Lending** → empréstimos P2P
+- **Risk Management** → scoring e detecção de fraude
+- **User Management** → autenticação e KYC
 
-Cada domínio possui sua própria base de dados e regras de negócio, evitando dependências desnecessárias e facilitando manutenção.  
-Essa separação é **crucial em P2P lending**, onde diferentes domínios possuem requisitos regulatórios distintos.
+A separação rigorosa impede que mudanças no sistema de **empréstimos** afetem as operações de **carteira**, algo essencial para estabilidade financeira.
 
 ---
 
 ## Event-Driven Architecture
 
-A **Event-Driven Architecture** (arquitetura orientada a eventos) permite que os serviços se comuniquem por meio de eventos assíncronos, como:
+A **Event-Driven Architecture** processa eventos financeiros de forma **assíncrona**. Exemplos:
 
-- "Usuário criou pedido de empréstimo"
-- "Investidor fez oferta"
+- `TransferRequested`
+- `PaymentCompleted`
+- `LoanApproved`
+- `FraudDetected`
 
-Essa comunicação **não-bloqueante** garante que o sistema continue operando mesmo que alguns serviços estejam temporariamente indisponíveis.
+Benefícios:
 
-- Plataformas financeiras que adotam essa abordagem conseguem processar mais de **1.500 empresas** e **1,5 milhão de usuários** em apenas **duas semanas**.
+- Garante **auditoria completa**.
+- Permite **rollback de operações complexas**.
+- Exemplo: se uma **transferência PIX falha**, um **evento de compensação** reverte o débito automaticamente, mantendo consistência.
 
 ---
 
 ## API Gateway
 
-O **API Gateway** centraliza todas as requisições externas, fornecendo:
+O **API Gateway** centraliza o acesso às operações financeiras, fornecendo:
 
-- Autenticação
-- Rate limiting (controle de frequência de requisições)
-- Logging (registro de atividades)
-- Roteamento para os microsserviços apropriados
+- **Autenticação OAuth 2.0**
+- **Rate limiting** específico (máx. **10 transferências/minuto**)
+- **Roteamento inteligente** para os microsserviços apropriados
+- **Logs detalhados** para compliance regulatório
 
-Essa camada de segurança é essencial para aplicações financeiras, permitindo **controle granular de acesso** e monitoramento detalhado de todas as interações.
+Além disso, **circuit breakers** isolam automaticamente serviços com problemas para evitar propagação de falhas.
 
 ---
 
-## Arquitetura Polyglot
+## Database per Service
 
-A **arquitetura polyglot** permite utilizar diferentes tecnologias para diferentes serviços, conforme suas necessidades específicas:
+A arquitetura segue o padrão **Database per Service**, isolando dados financeiros em tecnologias específicas:
 
-- **Node.js** → APIs de alta performance
-- **Python** → algoritmos de machine learning para score de crédito
-- **PostgreSQL** → dados transacionais críticos
+- **PostgreSQL** → transações (garantindo ACID)
+- **Redis** → cache de saldos em tempo sub-segundo
+- **TimescaleDB** → histórico de transações e métricas
 
-Essa flexibilidade tecnológica otimiza a **performance individual de cada componente** da aplicação.
+O padrão **Saga** gerencia transações distribuídas, garantindo **consistência entre serviços** mesmo em caso de falhas parciais.
+
+---
+
+# Padrões de Interface (UI/UX Architecture)
+
+## Component-Based Architecture
+
+A **Component-Based Architecture** encapsula funcionalidades da carteira em **componentes reutilizáveis**, como:
+
+- `WalletBalance` → exibe saldo com opção de **máscara/desmáscara**
+- `TransactionHistory` → lista de transações com **paginação infinita**
+- `TransferForm` → formulários com **validações em tempo real**
+- `SecurityIndicator` → exibe **status de criptografia**
+
+Esses componentes isolados facilitam **testes de segurança** e **auditoria de fluxos financeiros críticos**.
+
+---
+
+## Redux para Estado Financeiro
+
+O **Redux** gerencia **dados sensíveis** da carteira de forma centralizada, com **imutabilidade obrigatória**.
+
+- **Normalized state structure** → armazena transações por ID, evitando duplicação.
+- **Selectors memoizados** → calculam saldos disponíveis considerando transações pendentes.
+- **Middleware customizado**:
+  - Registra todas as mutações de estado financeiro para **auditoria**.
+  - Implementa **rate limiting local** para operações críticas.
+
+---
+
+## Atomic Design para Fintech
+
+O **Atomic Design** organiza a hierarquia de componentes da carteira em níveis específicos:
+
+- **Átomos** → `InputMoney` (formatação de moeda), `ButtonSecure` (com loading states)
+- **Moléculas** → `TransferCard` (combina valor + destinatário + confirmação)
+- **Organismos** → `WalletDashboard` (agrega saldo + histórico + ações rápidas)
+
+**Design tokens** centralizam cores de status:
+
+- Verde → sucesso
+- Amarelo → pendente
+- Vermelho → erro
+
+---
+
+## Security-First Patterns
+
+Os **Security-First Patterns** adicionam camadas de proteção específicas:
+
+- **Confirmação em duas etapas** para transferências acima de **R$500**
+- **Máscaras automáticas** para dados bancários
+- **Timers de sessão visíveis** para reforçar segurança
+- **Progressive disclosure** → revela informações sensíveis apenas após **biometria**
+- **Feedback visual imediato** em todas as operações financeiras, reduzindo ansiedade do usuário
+
+---
+
+## Real-time State Sync
+
+A carteira implementa **sincronização em tempo real** via **WebSocket**, garantindo dados sempre atualizados.
+
+- **Reconnection automática** em caso de falha de conexão
+- **Optimistic updates** → mostram mudanças instantaneamente enquanto aguardam confirmação do servidor
+- **Conflict resolution automático** → resolve divergências priorizando sempre os **dados do servidor**
 
 ---
 
 ## Referências
 
-- VELMIE. [How to Build a Fintech Platform with Microservices Architecture in 2025](https://www.velmie.com/post/how-to-build-a-fintech-platform-with-microservices). Acesso em: 28 set. 2025.
-- MEDIUM. [Designing a P2P Lending platform with Elixir in mind](https://medium.com/nebo-15/designing-a-p2p-lending-platform-with-elixir-in-mind-ffb323bf7252). Acesso em: 28 set. 2025.
+### Arquitetura
+
+- VELMIE. [How to Build a Fintech Platform with Microservices Architecture](https://www.velmie.com/post/how-to-build-a-fintech-platform-with-microservices). Acesso em: 28 set. 2025.
 - BOS FINTECH. [Event-Driven Architecture: the future of core banking system design](https://bosfintech.com/event-driven-architecture-the-future-of-core-banking-system-design/). Acesso em: 28 set. 2025.
-- SEMANTIVE. [Securing Fintech Transactions with Microservices and Distributed Services](https://www.semantive.com/blog/securing-fintech-transactions-with-microservices-and-distributed-services). Acesso em: 28 set. 2025.
+
+### UI/UX
+
+- SAM SOLUTIONS. [What Is Component-Based Architecture?](https://sam-solutions.com/blog/what-is-component-based-architecture/). Acesso em: 28 set. 2025.
+- GEEKSFORGEEKS. [Component-Based Architecture - System Design](https://www.geeksforgeeks.org/component-based-architecture-system-design/). Acesso em: 28 set. 2025.
