@@ -8,50 +8,108 @@ description: Comunicação & Real-time
 
 ## WebSocket
 
-O **WebSocket** mantém usuários conectados ao sistema para receber **atualizações instantâneas**.
+- Mantém **conexão bidirecional persistente** entre cliente e servidor, permitindo comunicação instantânea em ambas direções.
+- Diferente do HTTP (nova requisição a cada atualização), o WebSocket estabelece **canal único permanente** onde o servidor pode enviar dados sem solicitação.
+- Exemplo no **P2P lending**: quando investidor recebe **PIX** na carteira, o saldo atualiza automaticamente na tela sem refresh.
+- Conexão ativa até que uma das partes encerre → latência **sub-50ms** para dados financeiros.
+- **Socket.io** implementa WebSocket com **fallback automático** para polling em caso de falha, garantindo funcionamento em qualquer ambiente.
 
-- Quando alguém recebe um **PIX** na carteira, o saldo é atualizado automaticamente na tela, sem precisar recarregar a página.
-- A conexão permanece ativa, permitindo que o servidor envie informações em tempo real.
-- Essencial para exibir mudanças de status de **empréstimos** instantaneamente aos investidores.
+📊 _JPMorgan utiliza WebSocket para transmitir dados de pagamento em tempo real, mantendo conexões por até 24h._
+
+---
+
+## Feed Social
+
+- **Algoritmo híbrido** combina:
+
+  - **Collaborative filtering**: analisa padrões de investimento similares entre usuários.
+  - **Content-based filtering**: cruza características do solicitante (idade, motivo, score, histórico) com preferências explícitas do investidor.
+
+- **XGBoost** processa 100+ features gerando **similarity score** que define ordem no feed.
+
+  - Accuracy de **75-85%** em loan matching.
+
+- **GraphQL subscriptions** mantêm feed atualizado em tempo real quando:
+  - novos solicitantes aparecem
+  - status de empréstimos muda
+- Elimina polling, reduzindo latência para **sub-100ms**.
+- Sistema prioriza perfis **completos e verificados via KYC**, penalizando informações incompletas.
+
+---
+
+## Moderação de Conteúdo
+
+- **ML com BERT fine-tuned** classifica textos detectando:
+
+  - pedidos duplicados
+  - valores inconsistentes
+  - narrativas genéricas/copypaste
+
+- Regras:
+
+  - Perfis com similarity score >90% com conteúdo flagged são bloqueados automaticamente.
+  - Casos ambíguos vão para revisão manual.
+
+- **Rate limiting**: máximo **3 pedidos de empréstimo por solicitante a cada 30 dias**.
+- **Image recognition**: valida que fotos de perfil são reais, usando **face detection** para cruzar com documentos KYC.
 
 ---
 
 ## Push Notifications
 
-As **Push Notifications** enviam avisos importantes mesmo quando o aplicativo está fechado.
+- Enviam alertas críticos mesmo com app fechado.
+- Taxa de abertura em fintech: **50-60%** (superior ao email).
+- Exemplos:
 
-- Exemplos de alertas críticos:
-  - “Transferência de R$500 confirmada”
-  - “Login suspeito detectado”
-- **Taxa de abertura de 60%** em fintechs, superando e-mails tradicionais.
-- O sistema identifica o **melhor horário para envio** (manhã ou noite), aumentando o engajamento em **25%**.
+  - "Transferência R$500 confirmada"
+  - "Login suspeito detectado"
+
+- Insights:
+
+  - Push contribui para **+26%** na taxa de primeira transação quando integrado em estratégia multicanal.
+  - Timing: melhor resposta entre **6-8h manhã** e **10h-0h noite**.
+  - Personalização com nome dobra **click-through rate** em relação a mensagens genéricas.
+
+- **FCM (Firebase Cloud Messaging)** gerencia:
+  - delivery multi-plataforma
+  - retry automático
+  - analytics integrado
 
 ---
 
 ## Chat Seguro
 
-O **Chat Seguro** conecta investidores com solicitantes através de mensagens auditadas.
+- Conecta **investidores ↔ solicitantes** via mensagens auditadas.
+- Regras de segurança:
 
-- Conversas ficam registradas para **compliance**.
-- Sistema bloqueia **spam** (máximo de **10 mensagens/hora**).
-- Filtra automaticamente conteúdo inadequado.
-- Notificações de novas mensagens:
-  - Via **WebSocket** quando o app está aberto.
-  - Via **push** quando o app está fechado.
+  - todas conversas registradas para **compliance**
+  - spam limitado a **10 mensagens/hora**
+  - filtro automático de conteúdo inadequado
+
+- Notificações:
+
+  - **WebSocket** quando app está aberto
+  - **Push** quando app fechado
+
+- **Criptografia end-to-end** protege conteúdo.
+- **Metadata** permanece acessível para auditoria.
 
 ---
 
 ## Sincronização Automática
 
-A **sincronização automática** garante consistência de informações mesmo com **conexão instável**.
-
-- Se a internet cair durante uma transferência, o sistema salva localmente e sincroniza ao reconectar.
-- Evita duplicação de notificações.
-- Resolve conflitos de dados, **priorizando sempre as informações do servidor**.
+- Garante consistência de dados em caso de conexão instável.
+- Estratégia:
+  - Operações salvas localmente durante queda da internet.
+  - **Conflict resolution** decide versão válida na reconexão.
+  - **Optimistic updates**: mudanças aparecem imediatamente na interface antes da confirmação do servidor.
+  - **Idempotency keys** evitam duplicação.
+  - Dados do servidor prevalecem em caso de conflito.
 
 ---
 
 ## Referências
 
-- MEDIUM. [Fintech Push Notifications: How to Engage Users in Real Time](https://upshot-ai.medium.com/fintech-push-notifications-how-to-engage-users-in-real-time-018859843c00). Acesso em: 28 set. 2025.
-- CLEVERTAP. [How Push Notifications in Fintech Drive Engagement & Growth](https://clevertap.com/blog/push-notifications-in-fintech/). Acesso em: 28 set. 2025.
+- JPMORGAN. _WebSocket basics_. Disponível em: [developer.payments.jpmorgan.com](https://developer.payments.jpmorgan.com/blog/guides/websocket-basics). Acesso em: 28 set. 2025.
+- CLEVERTAP. _How Push Notifications in Fintech Drive Engagement & Growth_. Disponível em: [clevertap.com](https://clevertap.com/blog/push-notifications-in-fintech/). Acesso em: 28 set. 2025.
+- PUSHWOOSH. _Fintech push notifications in 2025: Benchmarks, best practices, and real examples_. Disponível em: [pushwoosh.com](https://www.pushwoosh.com/blog/push-notifications-fintech/). Acesso em: 28 set. 2025.

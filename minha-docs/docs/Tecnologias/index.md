@@ -47,4 +47,8 @@ import Link from '@docusaurus/Link';
     <h3>Comunicação & Real-time </h3>
     <p>Atualizações, notificações, sincronização. </p>
   </Link>
+  <Link to="/tecnologias/analise-concorrentes" className="tech-card">
+    <h3>Análise dos Concorrentes </h3>
+    <p>Análise dos possiveis concorrentes da solução. </p>
+  </Link>
 </div>

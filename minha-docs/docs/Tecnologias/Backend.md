@@ -8,90 +8,92 @@ description: Serviços, APIs, autenticação e padrões de domínio
 
 ## Node.js
 
-O **Node.js** processa transações financeiras e operações de carteira através de uma **arquitetura orientada a eventos**, ideal para operações simultâneas como:
-
-- Transferências **PIX**
-- Atualizações de saldo
-- Validações de crédito
-
-- Empresas como **PayPal** e **Capital One** utilizam Node.js para processar **milhões de transações diárias**, demonstrando sua capacidade em operações financeiras críticas.
-- A **event-driven architecture** garante que falhas em uma operação não afetem outras transações concorrentes.
+- Processa **transações financeiras** com arquitetura orientada a **eventos**, executando múltiplas operações simultaneamente sem bloquear o sistema.
+- Exemplo: quando investidor realiza transferência **PIX**, o sistema continua processando outras requisições em paralelo.
+- Empresas como **PayPal** e **Capital One** processam milhões de transações diárias com Node.js → comprovando capacidade em operações críticas.
+- Arquitetura **assíncrona** é ideal para aplicações em tempo real, como:
+  - atualizações de saldo
+  - notificações instantâneas
 
 ---
 
 ## Express.js
 
-O **Express.js** implementa **APIs RESTful** específicas para a carteira digital, como:
+- Cria **APIs RESTful** para operações da plataforma:
 
-- `/wallet/balance`
-- `/wallet/transfer`
-- `/wallet/history`
+  - consultar saldo
+  - realizar investimentos
+  - buscar solicitantes
+  - enviar mensagens
 
-Funcionalidades e segurança:
+- Middleware adiciona funcionalidades como:
 
-- **Autenticação JWT**
-- **Rate limiting** → prevenção contra ataques e fraudes
-- **Validação rigorosa de entrada**
-- **Logs de auditoria automáticos** em rotas de transferência
+  - autenticação **JWT**
+  - **rate limiting** (prevenção de ataques)
+  - validação de dados
 
-As rotas de transferência incluem verificações de saldo, validações de destinatário e limites de tentativas por **usuário/minuto** para maior segurança.
+- **Express.js** é framework minimalista → fornece ferramentas essenciais sem complexidade extra, acelerando desenvolvimento de endpoints financeiros.
+
+---
+
+## ML Infrastructure
+
+- Executada em **container Python** separado, servindo modelo via **FastAPI**.
+- **Comunicação Node.js ↔ Python** ocorre via **gRPC** → baixa latência (&lt;50ms) no scoring de crédito em tempo real.
+- **Feature Store**:
+
+  - utiliza **Redis** para cache de features pré-computadas (histórico de pagamentos, velocity, debt-to-income ratio).
+
+- **Model Management**:
+  - **MLflow** faz versionamento → A/B testing (10% tráfego novo modelo, 90% produção).
+  - Deploy automático se métricas melhoram **>5%**.
+- **Pipeline de retreinamento**: semanal, incorporando novos dados.
+- **Orquestração**: SageMaker ou Kubernetes Job treinam em GPU quando dataset ultrapassa threshold.
 
 ---
 
 ## PostgreSQL
 
-O **PostgreSQL** armazena dados financeiros utilizando **transações ACID**, garantindo integridade absoluta:
+- Armazena dados financeiros com **transações ACID**, garantindo integridade.
+- **ACID**:
 
-- Se uma transferência falha, o saldo do remetente **não é debitado**.
-- Estrutura do banco:
-  - `wallet_accounts`
-  - `transactions`
-  - `transfer_logs`
+  - Atomicidade → operação completa ou nada
+  - Consistência → dados sempre válidos
+  - Isolamento → transações não interferem entre si
+  - Durabilidade → dados salvos permanentemente
 
-Todas com **foreign keys rígidas** e **constraints** que impedem saldos negativos.
-
-Recursos adicionais:
-
-- **Backup automático** a cada 15 minutos
-- **Replicação em tempo real** para **disaster recovery**
+- Exemplo: se transferência falha, saldo não é debitado.
+- **Modelagem relacional**: investidores, solicitantes, transações e empréstimos conectados por **foreign keys**.
+- **Backup automático** + **replicação** protegem contra perda de dados.
 
 ---
 
-## Microsserviços Financeiros
+## Microsserviços
 
-As responsabilidades críticas foram separadas em diferentes **microsserviços**:
+- Sistema dividido em serviços independentes:
 
-- `wallet-service` → gestão de saldos
-- `payment-service` → PIX / TED
-- `transaction-service` → histórico
-- `fraud-detection-service` → análise em tempo real
+  - **wallet-service** → gerencia carteira
+  - **lending-service** → processa empréstimos
+  - **credit-scoring-service** → calcula risco
+  - **messaging-service** → chat entre usuários
+  - **notification-service** → alertas
 
-A comunicação ocorre via **message queues**, garantindo que falhas em um serviço não comprometam operações críticas.  
-Cada serviço possui:
-
-- **Database dedicado**
-- **Escalabilidade independente**
+- Cada serviço tem **database próprio** e pode ser atualizado isoladamente.
+- Exemplo: falha no serviço de mensagens não afeta investimentos.
+- Comunicação entre serviços via **APIs** e **message queues**, garantindo resiliência.
 
 ---
 
 ## Integrações de Pagamento
 
-As **integrações de pagamento** conectam a plataforma a:
-
-- Gateways **PIX** do Banco Central
-- Processadores de **TED**
-- APIs de **cartão de crédito**
-
-Por meio de **adapters padronizados**.
-
-Mecanismos de resiliência:
-
-- **Circuit breakers** → isolam gateways problemáticos e redirecionam para backups
-- **Webhook handling** → processa confirmações de pagamento assíncronas, mantendo o estado consistente
+- Conexão com **PIX** via **APIs bancárias**.
+- **Webhooks** confirmam transações de forma assíncrona (sem necessidade de polling).
+- **Circuit breakers** detectam falhas em gateways e redirecionam para alternativas automaticamente.
 
 ---
 
 ## Referências
 
-- DASHDEVS. [Node.js and Microservice: Mastering Scalability in Fintech](https://dashdevs.com/blog/nodejs-and-microservices-unlocking-scalability-and-flexibility-in-fintech/). Acesso em: 28 set. 2025.
-- MEDIUM. [Node.js in Fintech: Revolutionizing Financial Services](https://webcluesinfo.medium.com/node-js-in-fintech-revolutionizing-financial-services-2aa53a792b2d). Acesso em: 28 set. 2025.
+- DASHDEVS. _Node.js and Microservice: Mastering Scalability in Fintech_. Disponível em: [dashdevs.com](https://dashdevs.com/blog/nodejs-and-microservices-unlocking-scalability-and-flexibility-in-fintech/). Acesso em: 28 set. 2025.
+- DEV COMMUNITY. _Building a Fintech App in 2024: Best Tech Stacks and Architecture Choices_. Disponível em: [dev.to](https://dev.to/lucas_wade_0596/building-a-fintech-app-in-2025-best-tech-stacks-and-architecture-choices-4n85). Acesso em: 28 set. 2025.
+- VELMIE. _How to Build a Fintech Platform with Microservices Architecture_. Disponível em: [velmie.com](https://www.velmie.com/post/how-to-build-a-fintech-platform-with-microservices). Acesso em: 28 set. 2025.

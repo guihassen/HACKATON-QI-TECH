@@ -6,69 +6,82 @@ description: Plataforma & SRE
 
 # Plataforma & SRE
 
+## Redis
+
+- Funciona como **cache in-memory** com latência **sub-milissegundo**.
+- Usos no P2P lending:
+
+  - **Cache de saldos** → evita queries repetitivas no PostgreSQL.
+  - **Sessões de usuário** → autenticação rápida.
+  - **Rate limiting** → counters com TTL automático.
+  - **Sorted sets** → rankeiam solicitantes no feed por score (queries top-N em **O(log N)**).
+  - **Pub/sub broadcasting** → notifica múltiplas instâncias Node.js em eventos críticos (ex.: pagamento confirmado).
+  - **Feature store ML** → mantém features pré-computadas com TTL de 1h (ex.: _debt-to-income ratio_).
+
+- **Alta disponibilidade**:
+  - Redis Cluster com replicação **master-slave**.
+  - Persistência via **RDB snapshots + AOF logs** previne perda de dados.
+
+---
+
 ## Kubernetes
 
-O **Kubernetes** garante **alta disponibilidade** para serviços críticos da carteira através de **réplicas automáticas em múltiplas zonas AWS**, mantendo operações financeiras ativas mesmo em caso de falhas de servidor.
+- Automatiza **deployment** e gerenciamento de containers.
+- Garantias:
+  - múltiplas réplicas de cada serviço em servidores distintos
+  - redirecionamento automático de tráfego em caso de falha
+- **Auto-scaling**: adiciona recursos em picos (ex.: horário de almoço, final do mês) e reduz em baixa demanda → otimização de custos.
+- **Health checks** a cada 30s → reinício automático de containers problemáticos.
 
-- Implementa **health checks específicos** que verificam a conectividade com gateways **PIX** a cada **30 segundos**.
-- Reinicia **pods automaticamente** em caso de problemas.
-- O **auto-scaling** adiciona recursos durante picos de transferências, garantindo que operações não falhem por sobrecarga.
+📊 _Goldman Sachs e PayPal utilizam Kubernetes para acelerar entrega e melhorar resiliência._
 
 ---
 
 ## Prometheus
 
-O **Prometheus** monitora **métricas financeiras críticas**, incluindo:
+- Coleta métricas via **scraping** (consulta endpoints periodicamente).
+- Dados salvos como **séries temporais**.
+- Métricas críticas monitoradas:
 
-- **Latência de transferências PIX** (meta < 2 segundos)
-- **Taxa de sucesso de transações** (meta > 99,9%)
-- **Disponibilidade de APIs de pagamento**
-- **Volume de transações por segundo**
+  - latência de transferências PIX (meta &lt;2s)
+  - taxa de sucesso de investimentos (meta >99,9%)
+  - uso de CPU/memória dos serviços
+  - volume de transações por segundo
 
-**Alertas automáticos** são disparados quando:
+- Armazena dados em formato eficiente → consultas rápidas com **PromQL**.
 
-- Transferências demoram mais de **5 segundos**
-- A taxa de falha excede **0,1%**
-
-Isso permite **resposta imediata** antes que usuários sejam afetados.
+📊 _67%+ das organizações usam Prometheus em produção segundo pesquisa Grafana Labs 2025._
 
 ---
 
 ## Grafana
 
-O **Grafana** cria **dashboards específicos para operações financeiras**:
+- Cria **dashboards visuais** com métricas em gráficos e painéis interativos.
+- Exemplos:
 
-- **Painel de saúde da carteira** mostrando saldo total, volume de transferências em tempo real, status de gateways PIX/TED e métricas de fraude detectada.
-- **Dashboards executivos** exibem KPIs como:
-  - Receita de taxas
-  - Volume transacionado
-  - Disponibilidade do sistema (SLA de **99,95%**)
+  - volume de investimentos em tempo real
+  - taxa de erro por serviço
+  - mapa de calor de horários de pico
 
----
-
-## Observabilidade Financeira
-
-A **observabilidade financeira** implementa rastreamento distribuído para acompanhar transações completas — desde o clique do usuário até a confirmação bancária.
-
-- Permite identificar exatamente **onde operações falham**.
-- **Logs estruturados** registram cada etapa da transferência para **auditoria regulatória**.
-- **Circuit breakers** isolam automaticamente gateways problemáticos, redirecionando para backups sem afetar usuários.
+- **Alertas automáticos**:
+  - se transferências PIX >5s → equipe notificada via Slack/email.
+- Integração com Prometheus → correlação de métricas para análise de causa raiz.
 
 ---
 
-## SLAs Específicos
+## Observabilidade
 
-Foram definidos **SLAs críticos** para a carteira digital:
-
-- **Disponibilidade**: 99,95% (máximo 4 horas de downtime/ano)
-- **Latência máxima**:
-  - 2 segundos para consulta de saldo
-  - 5 segundos para transferências PIX
-- **Recuperação de falhas**: em menos de 1 minuto
+- Combina **métricas (Prometheus)**, **logs** e **traces**.
+- Exemplo: em falha de transferência PIX →
+  - verificar logs de erros específicos
+  - visualizar métricas do serviço de pagamento
+  - rastrear requisição completa entre microsserviços
+- Garante **visão ponta-a-ponta** do sistema e acelera resolução de incidentes.
 
 ---
 
 ## Referências
 
-- IBM. [What Is SRE Observability?](https://www.ibm.com/think/topics/sre-observability). Acesso em: 28 set. 2025.
-- GOOGLE SRE. [Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/). Acesso em: 28 set. 2025.
+- REDIS. _Redis Documentation_. Disponível em: [redis.io](https://redis.io/docs/). Acesso em: 28 set. 2025.
+- GRAFANA LABS. _Observability Survey Report 2025_. Disponível em: [grafana.com](https://grafana.com/observability-survey/). Acesso em: 28 set. 2025.
+- MEDIUM. _Scaling Financial Applications with Kubernetes: A Developer's Guide_. Disponível em: [medium.com](https://medium.com/@puneett.bhatnagr/scaling-financial-applications-with-kubernetes-a-developers-guide-b5469f609115). Acesso em: 28 set. 2025.

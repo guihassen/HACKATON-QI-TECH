@@ -8,72 +8,52 @@ description: Parte visual da aplicação
 
 ## React com TypeScript
 
-O **React com TypeScript** foi escolhido para construir a interface da carteira digital segura, implementando componentes específicos como:
-
-- Saldo em tempo real
-- Histórico de transações
-- Formulários de transferência
-
-**React** permite atualizações instantâneas de saldo via **WebSocket**, sem recarregar a página.  
-**TypeScript** previne erros em cálculos financeiros que poderiam causar inconsistências.
-
-- O **Airbnb** melhorou sistemas de pagamento em **150x** após migrar para React, demonstrando capacidade de processar **milhões de transações diárias**.
+Constrói a interface visual da plataforma onde investidores navegam perfis de solicitantes e acompanham investimentos.  
+React é uma biblioteca JavaScript (linguagem de programação web) que divide a interface em **componentes reutilizáveis** — blocos como _card de solicitante_ ou _dashboard de carteira_ que podem ser usados em várias páginas.  
+TypeScript adiciona validação de tipos, impedindo erros comuns em cálculos financeiros como confundir texto com número.  
+Plataformas como **Airbnb** e **PayPal** usam React para processar milhões de transações diárias, comprovando capacidade para operações financeiras críticas.
 
 ---
 
 ## Next.js
 
-O **Next.js** implementa **Server-Side Rendering (SSR)** para páginas de carteira, garantindo que informações financeiras sensíveis sejam renderizadas no **servidor** antes de chegar ao navegador.
-
-- Melhora segurança.
-- Reduz em **40%** o tempo de carregamento de dashboards financeiros.
-
-Além disso, o **Static Site Generation (SSG)** pré-gera páginas estáticas como **“Como transferir”** e **“Taxas”**, mantendo alta performance enquanto dados dinâmicos como **saldo** são carregados separadamente.
+Melhora performance através de **SSR (Server-Side Rendering — renderização no servidor)**.  
+Páginas como o feed de solicitantes são montadas no servidor antes de chegar ao navegador, reduzindo tempo de carregamento em 40% e melhorando **SEO** (otimização para buscadores como Google).  
+Páginas estáticas como _Como Funciona_ são pré-geradas durante o build, carregando instantaneamente.  
+Next.js é usado por **Netflix** e **TikTok** para aplicações de alta performance.
 
 ---
 
-## Redux Toolkit com RTK Query
+## Redux Toolkit
 
-O **Redux Toolkit com RTK Query** gerencia o **estado da carteira** de forma centralizada, sincronizando:
-
-- Saldos
-- Histórico de transações
-- Status de transferências
-
-Funcionalidades:
-
-- **Time-travel debugging** → rastreia cada mudança de estado financeiro para **auditoria**.
-- **Middleware personalizado** → registra todas as operações da carteira para **compliance**.
-- **Cache com TTL apropriado** → protege dados sensíveis como saldos.
+Gerencia **estado da aplicação** — dados que precisam estar disponíveis em múltiplos lugares, como saldo da carteira ou lista de investimentos ativos.  
+Redux centraliza esses dados em um _store_ único, garantindo que mudanças (como novo investimento realizado) atualizem automaticamente todos os componentes relevantes.  
+**RTK Query** (extensão do Redux) automatiza chamadas de API, eliminando código repetitivo para buscar dados.  
+Para fintech, Redux oferece rastreamento completo de cada mudança de estado, essencial para **auditoria regulatória**.
 
 ---
 
 ## Tailwind CSS
 
-O **Tailwind CSS** estiliza os componentes da carteira com um **design system consistente**, incluindo:
-
-- Indicadores visuais de **segurança** (cadeados, certificados)
-- Estados de transação (**pendente, aprovada, rejeitada**)
-- Hierarquia visual clara para **informações financeiras críticas**
-
-Mantém o **bundle CSS abaixo de 10kB**, mesmo com componentes complexos, garantindo **carregamento rápido em conexões móveis**.
+Estiliza componentes através de **classes utilitárias** aplicadas diretamente no HTML, acelerando desenvolvimento em 50% comparado a CSS tradicional.  
+O **Design System** define paleta de cores (verde para aprovado, vermelho para risco alto, amarelo para pendente), espaçamentos e tipografia consistentes.  
+O _bundle_ final mantém-se abaixo de 10kB pois classes não utilizadas são removidas automaticamente.  
+A interface adapta-se responsivamente desde smartphones até desktops através de **breakpoints predefinidos**.
 
 ---
 
-## Componentes de Segurança Visual
+## Componentes principais
 
-Foram implementados padrões específicos para **fintech**:
-
-- **Confirmações em duas etapas** para transferências
-- **Máscaras de dados sensíveis**
-- Indicadores de **criptografia ativa**
-- **Feedback visual imediato** em operações críticas
-- **Progressive disclosure** → exibe informações bancárias apenas quando necessário, reduzindo exposição de dados
+- Feed social exibindo solicitantes com fotos e histórias.
+- Dashboard mostrando investimentos ativos com retornos em tempo real.
+- Sistema de carteira para transferências via PIX.
+- Chat seguro entre investidores e solicitantes (quando autorizado).
 
 ---
 
 ## Referências
 
-- AIRBNB ENGINEERING. [Unified Payments Data Read at Airbnb](https://medium.com/airbnb-engineering/unified-payments-data-read-at-airbnb-e613e7af1a39). Acesso em: 28 set. 2025.
-- GLORYWEBS. [React for Fintech: Build Secure & Scalable Apps](https://www.glorywebs.com/blog/react-for-fintech). Acesso em: 28 set. 2025.
-- NEXT.JS. [Web Performance & Core Web Vitals](https://nextjs.org/learn/seo/web-performance). Acesso em: 28 set. 2025.
+- SLASHDEV. _How To Build A Custom Fintech Platform In React In 2024_. Disponível em: [slashdev.io](https://slashdev.io/-how-to-build-a-custom-fintech-platform-in-react-in-2024). Acesso em: 28 set. 2025.
+- GLORYWEBS. _React for Fintech: Build Secure & Scalable Apps_. Disponível em: [glorywebs.com](https://www.glorywebs.com/blog/react-for-fintech). Acesso em: 28 set. 2025.
+- MEDIUM. _Why Fintech Apps Are Switching to Next.js for UI & Speed_. Disponível em: [medium.com](https://medium.com/@nakiboddin.saiyad/why-fintech-apps-are-switching-to-next-js-for-ui-speed-ab46b65ea990). Acesso em: 28 set. 2025.
+- DEV COMMUNITY. _State Management in 2025: When to Use Context, Redux, Zustand, or Jotai_. Disponível em: [dev.to](https://dev.to/hijazi313/state-management-in-2025-when-to-use-context-redux-zustand-or-jotai-2d2k). Acesso em: 28 set. 2025.

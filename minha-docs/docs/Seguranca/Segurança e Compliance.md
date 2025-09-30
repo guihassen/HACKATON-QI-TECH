@@ -4,91 +4,77 @@ title: Segurança e Compliance
 description: Como nossa plataforma mantém seus usuários seguros
 ---
 
-# Segurança e Compliance na Plataforma Peer-to-Peer — Imprest
+# Segurança & Compliance
 
-## Visão Geral
+## OAuth 2.0 com JWT
 
-A segurança e o compliance são pilares fundamentais da plataforma **Imprest**, garantindo proteção aos usuários, aderência às regulações brasileiras e confiança no ecossistema de crédito P2P. Esta documentação detalha os mecanismos técnicos, processuais e regulatórios que serão aplicados.
+- **OAuth 2.0**: protocolo padrão de autorização que permite acesso seguro sem compartilhar senhas.
+  - Usuário autentica uma vez e recebe **token temporário**.
+- **JWT (JSON Web Token)**: formato compacto contendo informações criptografadas sobre usuário e permissões.
+- **Medidas adicionais**:
+  - Tokens expiram em **15 minutos**, reduzindo janela de ataque.
+  - **Refresh tokens** permitem sessões prolongadas.
+  - **Token blacklisting** revoga acessos comprometidos imediatamente.
+  - **Rate limiting**: até **100 requisições/minuto** por usuário, bloqueando ataques de força bruta.
 
----
-
-## 1. Governança de Segurança
-
-- **Segurança by design:** requisitos de segurança incluídos desde a concepção.
-- **Políticas e auditoria:** trilhas de auditoria imutáveis (WORM) com carimbo de tempo.
-- **Gestão de identidade e acesso:** MFA, biometria em eventos críticos e segregação de privilégios.
-- **Criptografia:** TLS 1.3 em trânsito; AES-256 e KMS/HSM em repouso.
-- **Vault:** gerenciamento seguro de segredos, chaves e credenciais.
-
----
-
-## 2. Proteção de Dados (LGPD)
-
-- **Isolamento de PII:** dados pessoais segregados em repositórios dedicados.
-- **Minimização:** coleta apenas do necessário para análise de risco e operação.
-- **Consentimento:** transparente para uso de Open Finance e Serasa, com possibilidade de revogação.
-- **Portal do titular:** acesso, retificação e exclusão de dados.
-- **DPIA:** relatórios de impacto de proteção de dados para modelos de risco.
+📊 _Mastercard reporta 93% de redução em fraudes com MFA implementado corretamente._
 
 ---
 
-## 3. Compliance Regulatória
+## Autenticação Biométrica
 
-- **PLD/FT (AML):** monitoramento contínuo contra lavagem de dinheiro e financiamento ao terrorismo.
-  - Integração com listas PEP e sanções.
-  - Comunicação automática ao COAF em casos suspeitos.
-- **Open Finance:** consentimentos claros (escopo, finalidade, prazo).
-- **Assinatura eletrônica:** não-repúdio com assinaturas assimétricas, logs e hash.
-- **Auditoria:** eventos de negócio e logs WORM para fiscalizações.
+- Substitui senhas por características físicas únicas:
+  - Impressão digital (**57%** dos bancos globalmente)
+  - Reconhecimento facial (**32%**)
+  - Reconhecimento de voz
+- **Face ID** e **Touch ID** validam identidade em **&lt;300ms**, aprovando transferências críticas.
+- **Liveness detection** previne spoofing com fotos/vídeos, distinguindo pessoas reais.
+- Dados biométricos armazenados em:
+  - **Secure Enclave** (iOS)
+  - **TrustZone** (Android)
+- **Nunca** saem do dispositivo.
 
----
-
-## 4. Antifraude e Identidade
-
-- **KYC completo:** validação documental, biometria facial com liveness e device fingerprint.
-- **Step-up biométrico:** para ações críticas como publicação de pitch e contratação.
-- **Modelos de detecção de fraude:** machine learning + regras heurísticas.
-- **Monitoramento comportamental:** análise de padrões de uso para identificar anomalias.
+📊 _Bank of America reduziu fraudes em 52% após implementar biometria._
 
 ---
 
-## 5. Arquitetura Segura
+## Multi-Factor Authentication (MFA)
 
-- **Edge/BFF:** WAF, rate limiting e GraphQL seguro.
-- **Domínios isolados:** onboarding, KYC, antifraude, risco, contratos, servicing.
-- **Comunicação:** mTLS via service mesh (Kubernetes/EKS).
-- **Observabilidade:** métricas, logs e traces (OTel, Prometheus, Grafana, ELK).
-- **Ledger e contratos:** registro imutável com hash e armazenamento WORM.
-
----
-
-## 6. Blockchain (Roadmap de Confiança)
-
-- **Curto prazo:** hash de contratos/eventos + lote diário (Merkle) em ledger permissionado.
-- **Âncora pública:** publicação periódica em blockchain pública para prova de integridade.
-- **Futuro:** registro on-chain de contratos e eventual tokenização (sujeito à regulação).
-- **Princípio:** nenhuma PII será registrada on-chain.
+- Combina múltiplos fatores:
+  - Algo que você sabe (**senha**)
+  - Algo que você tem (**smartphone**)
+  - Algo que você é (**biometria**)
+- **Sistemas modernos** combinam biometria + token criptográfico, bloqueando **99.9%** dos ataques.
+- **Autenticação adaptativa**: analisa contexto (dispositivo novo, localização incomum) e exige verificação adicional apenas quando necessário.
 
 ---
 
-## 7. Monitoramento e Resposta
+## Criptografia
 
-- **SIEM:** centralização de eventos de segurança para análise em tempo real.
-- **Playbooks de resposta:** incidentes classificados em níveis de criticidade com planos de ação definidos.
-- **Red Team / Blue Team:** testes periódicos de invasão e simulações de fraude.
-- **SLOs de segurança:** disponibilidade ≥ 99,9%; detecção de fraude em tempo real.
-
----
-
-## 8. Conformidade Contínua
-
-- **Treinamentos periódicos:** equipe de produto, tecnologia e atendimento.
-- **Auditorias externas:** testes anuais de compliance e segurança.
-- **Registros regulatórios:** adequação contínua à regulação do Banco Central e LGPD.
-- **Governança de modelos:** documentação, versionamento e validação dos modelos de risco e fraude.
+- **TLS 1.3** protege dados em trânsito (navegador ⇄ servidor).
+- **AES-256** criptografa dados em repouso no banco de dados.
+- **AWS KMS (Key Management Service)** gerencia chaves criptográficas com rotação automática a cada **90 dias**.
+- **Tokenização** substitui dados sensíveis (CPF, número de conta) por identificadores únicos.
+  - Mesmo que o banco seja comprometido, os dados reais permanecem seguros.
 
 ---
 
-## Conclusão
+## KYC/AML
 
-Combinando **tecnologia avançada**, **processos robustos** e **compliance regulatória**, a plataforma Imprest cria um ambiente seguro, auditável e confiável para o crédito peer-to-peer no Brasil. Essa abordagem garante a proteção dos usuários e a escalabilidade do negócio em um setor altamente regulado.
+- Verificação de identidade inclui:
+  - **OCR** (reconhecimento ótico de caracteres) em documentos
+  - **Validação facial** comparando selfie com documento
+  - **Consultas em bases governamentais**
+- Provedores: **Onfido**, **Trulioo**, **Plaid** oferecem APIs para automação.
+- **Monitoramento contínuo** detecta padrões suspeitos:
+  - múltiplas contas com mesmo CPF
+  - transferências estruturadas para evitar limites de detecção
+  - volumes atípicos
+
+---
+
+## Referências
+
+- MEDIUM. _API Security Trends in FinTech: Why PSD2 and OAuth Matter_. Disponível em: [medium.com](https://medium.com/@globalfintechacademy/api-security-trends-in-fintech-why-psd2-and-oauth-matter-as-threats-double-year-on-year-6566fd3ca679). Acesso em: 28 set. 2025.
+- BRILLIANCE SECURITY MAGAZINE. _The Future of Biometric Authentication in Fintech_. Disponível em: [brilliancesecuritymagazine.com](https://brilliancesecuritymagazine.com/cybersecurity/the-future-of-biometric-authentication-in-fintech/). Acesso em: 28 set. 2025.
+- KALIHAM. _Biometric Security in Fintech: Trends & Benefits for 2025_. Disponível em: [kaliham.com](https://kaliham.com/biometric-security-in-fintech-trends-benefits-for-2025/). Acesso em: 28 set. 2025.

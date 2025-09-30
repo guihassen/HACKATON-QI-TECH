@@ -6,54 +6,72 @@ description: Data Analytics & Machine Learning
 
 # Data & Analytics
 
-## XGBoost
+## Modelos de Machine Learning
 
-O **XGBoost** foi escolhido como algoritmo principal para **credit scoring** (análise de crédito automatizada) devido à sua comprovada superioridade em aplicações de **P2P lending**.
+- **XGBoost**: analisa histórico comportamental calculando **score de crédito** baseado em **150+ features**, como:
 
-- Constrói múltiplas **árvores de decisão** que analisam simultaneamente mais de **100 variáveis**, como histórico de crédito, renda e comportamento financeiro.
-- Prevê se um solicitante irá pagar ou não o empréstimo.
-- Estudos com dados reais do **Lending Club** demonstram **accuracy de 99,4%** na detecção de defaults.
-- Supera métodos tradicionais como regressão logística em **15%**.
-- Gera **scores de risco instantâneos**, essenciais para aprovações rápidas que aumentam a conversão de usuários em **25%**.
+  - frequência de pagamentos
+  - saldo médio mantido
+  - pontualidade em quitações
+  - diversidade de transações
 
----
+- **Gradient Boosting Decision Tree (GBDT)**: processa dados através de múltiplas árvores de decisão que aprendem com erros anteriores.
 
-## Real-time Data Pipelines
+  - Alcança **90% de acurácia** em estudos com **Lending Club**.
 
-As **pipelines de dados em tempo real** processam informações financeiras instantaneamente com **latência inferior a 500 ms**, diferente de sistemas tradicionais que processam dados apenas uma vez ao dia.
-
-- Utilizam **Apache Kafka** e tecnologias de **stream processing**.
-- Suportam **milhões de transações simultâneas**.
-- Atualizam **scores de crédito**, detectam **fraudes** e monitoram **comportamentos em tempo real**.
-- Essa velocidade é **fundamental em P2P lending**, onde decisões precisam ser tomadas rapidamente.
+- **LightGBM**: alternativa mais rápida que o XGBoost.
+  - Ideal para **cálculos em tempo real** durante a aplicação de empréstimos.
 
 ---
 
 ## Feature Engineering
 
-O **Feature Engineering** automatiza a transformação de dados brutos em variáveis úteis para machine learning, como:
+Criação de variáveis específicas para análise financeira:
 
-- Cálculo de **razões dívida/renda**.
-- Criação de **indicadores temporais**.
-- Agregação de **padrões de comportamento**.
+- **Velocity de transações**: volume em janelas temporais
+- **Consistency score**: regularidade de pagamentos
+- **Debt-to-income ratio**: dívida versus renda
+- **Ratios comportamentais**:
 
-Esse processo melhora a **precisão dos modelos de credit scoring em 30-40%** comparado ao uso de dados não processados, garantindo que o algoritmo utilize informações realmente relevantes para decisões de risco de crédito.
+  - `valor_transferido / saldo_médio`
+  - `frequência_transações / dias_ativo`
+
+- **Features temporais**: detectam mudanças súbitas indicando **fraude** ou **dificuldades financeiras**.
 
 ---
 
-## LightGBM
+## Processamento em Tempo Real
 
-O **LightGBM** complementa o XGBoost ao oferecer:
+- **Apache Kafka** processa eventos transacionais instantaneamente.
+  - Cada PIX, investimento ou pagamento alimenta **pipelines de atualização** de scores de risco e métricas em tempo real.
+- **Stream processing**: latência &lt;500ms, permitindo bloquear operações suspeitas **antes da conclusão**.
+- **Kafka Streams**: agrega dados em tempo real (totais, médias, tendências) sem consultar o database.
 
-- **Velocidade 10x superior** em grandes volumes de dados.
-- **Accuracy acima de 91%**, mesmo em datasets extensos.
-- Uso no **re-scoring contínuo** de usuários conforme novos dados chegam.
-- Permite ajustes dinâmicos em **limites de crédito** e **taxas de juros** com base no comportamento mais recente.
+---
+
+## Explainability (XAI)
+
+Transparência é crítica para **regulamentação** — usuários rejeitados devem entender os motivos:
+
+- **SHAP (SHapley Additive exPlanations)**: mostra quanto cada feature contribuiu para o score final.
+- **LIME (Local Interpretable Model-agnostic Explanations)**: fornece explicações locais para validar consistência do modelo.
+
+---
+
+## Real-time Analytics
+
+- **ClickHouse** ou **TimescaleDB** armazenam métricas de **séries temporais**:
+
+  - volume transacionado por hora
+  - taxa de aprovação de empréstimos
+  - inadimplência por perfil de risco
+
+- **Dashboards executivos**: exibem KPIs atualizados a cada segundo, permitindo decisões baseadas em **dados atuais**.
 
 ---
 
 ## Referências
 
-- AIMSPRESS. [Machine learning and artificial neural networks to construct P2P lending credit-scoring model](https://www.aimspress.com/article/doi/10.3934/QFE.2022013?viewType=HTML). Acesso em: 28 set. 2025.
-- MEROXA. [How Real-Time Data Pipelines Drive Financial Insights in Fintech](https://meroxa.com/blog/how-real-time-data-pipelines-drive-financial-insights-in-fintech/). Acesso em: 28 set. 2025.
-- MDPI. [Credit Risk Prediction Using Machine Learning and Deep Learning](https://www.mdpi.com/2227-9091/12/11/174). Acesso em: 28 set. 2025.
+- AIMSPRESS. _Machine learning and artificial neural networks to construct P2P lending credit-scoring model_. Disponível em: [aimspress.com](https://www.aimspress.com/article/doi/10.3934/QFE.2022013?viewType=HTML). Acesso em: 28 set. 2025.
+- SCIENCEDIRECT. _Using machine learning to investigate the determinants of loan default in P2P lending_. Disponível em: [sciencedirect.com](https://www.sciencedirect.com/science/article/abs/pii/S0927538X24003020). Acesso em: 28 set. 2025.
+- ARXIV. _Explainable Artificial Intelligence Credit Risk Assessment using Machine Learning_. Disponível em: [arxiv.org](https://arxiv.org/html/2506.19383v1). Acesso em: 28 set. 2025.

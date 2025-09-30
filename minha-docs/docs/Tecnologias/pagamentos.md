@@ -8,72 +8,66 @@ description: Pagamentos e Transações
 
 ## PIX
 
-O **PIX** foi integrado como método principal de transferência, oferecendo:
-
-- Pagamentos **instantâneos** em média de **2,5 segundos**.
-- Disponibilidade **24/7**, incluindo finais de semana e feriados.
-- Transferências via **chaves** (CPF, e-mail, telefone) ou **QR codes dinâmicos**.
-
-No contexto de **P2P lending**:
-
-- Viabiliza repasses instantâneos para investidores após recebimento de parcelas.
-- Permite depósitos imediatos na carteira sem taxas bancárias.
-- Aumenta a **conversão em 40%** comparado à **TED tradicional**.
+- **Transferências instantâneas** em menos de **10 segundos**, operando **24/7**.
+- Desenvolvido pelo **Banco Central do Brasil**, utiliza chaves como **CPF** ou **email** para transferir fundos.
+- Benefícios no **P2P lending**:
+  - repasses instantâneos de juros quando solicitante paga parcelas
+  - depósitos na carteira sem aguardar compensação
+- Adoção: **93% da população adulta** utiliza, representando **47% das transações financeiras brasileiras**.
+- **Custos**:
+  - Pessoas físicas → **0%**
+  - Empresas → **0,33%**
 
 ---
 
-## Webhook Handling
+## Webhooks
 
-O sistema de **Webhook Handling** processa confirmações assíncronas de **PIX** e **TED** via callbacks do gateway de pagamento.
-
-Funcionalidades:
-
-- **Retry logic com backoff exponencial** → garante que nenhuma confirmação se perca.
-- **Fila persistente de eventos não processados**.
-- **Reconciliação automática** → compara extratos bancários com transações registradas, identificando discrepâncias em menos de **5 minutos**.
+- Processam confirmações **assíncronas** via notificações **HTTP POST** do gateway.
+- Sistema confirma recebimento com **código 200** e processa em **thread separada**, evitando timeouts.
+- **Retry logic** com _backoff exponencial_: aguarda 1, 2, 4 segundos entre tentativas até 24 horas.
+- **Idempotency keys** garantem que webhooks duplicados não processem a mesma transação múltiplas vezes.
 
 ---
 
-## Escrow Accounts (Contas de Custódia)
+## Escrow Accounts
 
-As **contas de custódia** retêm fundos de investidores até o matching com solicitantes, garantindo **segurança regulatória** exigida no Brasil.
-
-- Automação de **liberação parcial** conforme cronograma de empréstimo.
-- Retenção de percentual para **cobertura de inadimplência**.
-- Distribuição de **juros proporcionalmente** entre múltiplos investidores.
-- **Trustee licenciado** gerencia contas separadas conforme regulamentação do **Banco Central**.
+- Retêm fundos em conta controlada por **trustee licenciado** antes da liberação.
+- Exemplo: investidor empresta **R$1.000**, dinheiro vai primeiro para escrow.
+- Sistema libera após:
+  - **KYC aprovado**
+  - **Matching confirmado**
+- Regulamentação brasileira exige transferência em **T+1** (Banco Central).
+- **Dual escrow structure**:
+  - contas separadas para **fundos aguardando disbursement** e **repayments**.
 
 ---
 
 ## Split Payment
 
-O **Split Payment** divide automaticamente os recebimentos:
-
-- **2-3%** → taxa da plataforma
-- **95-96%** → repasse para investidores
-- **1-2%** → reserva técnica
-
-Características:
-
-- Cálculos realizados em **tempo real** durante a confirmação da transação.
-- **Liquidação T+1** para transferências bancárias.
-- Suporte a múltiplos investidores em um único empréstimo, com cálculo proporcional baseado na **participação individual**.
+- Divide transações automaticamente:
+  - **2-3%** → taxa da plataforma
+  - **95-96%** → repasse a investidores
+  - **1-2%** → reserva técnica
+- **Stripe Connect** gerencia distribuição para múltiplos investidores simultaneamente.
+- **Cálculos em tempo real** durante webhook, com liquidação **T+1**.
+- Para **refunds**, sistema reverte proporcionalmente mantendo distribuição original.
 
 ---
 
-## Circuit Breakers para Pagamentos
+## Circuit Breakers
 
-Os **circuit breakers** isolam automaticamente gateways com problemas e redirecionam operações para backups.
-
-- Se o processador **PIX** falha, o sistema tenta automaticamente via **TED**.
-- Usuários são notificados sobre a mudança de método.
-- **Health checks a cada 30 segundos** monitoram a disponibilidade das APIs de pagamento.
-- **Failover automático** mantém disponibilidade acima de **99,9%**.
+- Isolam automaticamente **gateways falhando**.
+- Após **3-5 falhas consecutivas**, o circuit **abre**, bloqueando novas requisições.
+- Estratégia:
+  - Se PIX falha → sistema tenta **TED** automaticamente
+  - Após **60 segundos**, circuit entra em **half-open** para testar recuperação
+- **Resilience4j** implementa o padrão, prevenindo colapso em cascata.
 
 ---
 
 ## Referências
 
-- WIKIPEDIA. [Pix (payment system)](<https://en.wikipedia.org/wiki/Pix_(payment_system)>). Acesso em: 28 set. 2025.
-- ANTINO. [P2P Payments Space And What Caused Its Rapid Growth](https://www.antino.com/blog/p2p-payment-app-development). Acesso em: 28 set. 2025.
-- HES FINTECH. [Payment Gateway Integration in Lending](https://hesfintech.com/blog/lending-payment-gateway-integration/). Acesso em: 28 set. 2025.
+- EBANX. _PIX: The new instant payment system from BACEN_. Disponível em: [ebanx.com](https://insights.ebanx.com/en/resources/payments-explained/pix-instant-payment-system/). Acesso em: 28 set. 2025.
+- STRIPE. _Receive Stripe events in your webhook endpoint_. Disponível em: [stripe.com](https://docs.stripe.com/webhooks). Acesso em: 28 set. 2025.
+- LEXOLOGY. _Peer-to-peer lending platforms under pressure following RBI's guidelines_. Disponível em: [lexology.com](https://www.lexology.com/library/detail.aspx?g=e364c0f1-15d9-4601-b470-c16293bfba96). Acesso em: 28 set. 2025.
+- MICROSOFT LEARN. _Circuit Breaker Pattern_. Disponível em: [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker). Acesso em: 28 set. 2025.
